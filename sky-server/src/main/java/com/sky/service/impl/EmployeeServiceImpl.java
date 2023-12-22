@@ -95,10 +95,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //设置密码
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-        //设置createTime
-        employee.setCreateTime(LocalDateTime.now());
-        //设置更新时间
-        employee.setCreateTime(LocalDateTime.now());
+
 
         //TODO 设置当前记录创建人id和修改人id
         //先写个假的,以后修改
@@ -113,9 +110,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
         //设置当前记录创建人id和修改人id
+        /*
+        //TODO 已经在AOP中实现
+         //设置createTime
+        employee.setCreateTime(LocalDateTime.now());
+        //设置更新时间
+        employee.setCreateTime(LocalDateTime.now());
         Long currentId = BaseContext.getCurrentId();
         employee.setCreateUser(currentId);
         employee.setUpdateUser(currentId);
+
+        */
         //调用持久层方法
         employeeMapper.insert(employee);
 
@@ -195,8 +200,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void update(EmployeeDTO employeeDTO) {
         Employee employee = Employee.builder()
-                .updateTime(LocalDateTime.now())
-                .updateUser(BaseContext.getCurrentId())
+                //TODO 已经通过AOP实现了
+                //.updateTime(LocalDateTime.now())
+                //.updateUser(BaseContext.getCurrentId())
                 .build();
         BeanUtils.copyProperties(employeeDTO, employee);
         employeeMapper.update(employee);
