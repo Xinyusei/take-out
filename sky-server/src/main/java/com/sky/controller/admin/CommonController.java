@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 
 import com.aliyuncs.exceptions.ClientException;
+import com.sky.constant.MessageConstant;
 import com.sky.result.Result;
 import com.sky.utils.AliOssUtil;
 import io.swagger.annotations.Api;
@@ -26,19 +27,29 @@ public class CommonController {
 
     @Autowired
     AliOssUtil aliOssUtil;
+
     /**
      * 文件上传
+     *
      * @param file
      * @return
      */
     @PostMapping("/upload")
     @ApiOperation(value = "文件上传")
-    public Result<String> upload(MultipartFile file) throws Exception {
+    public Result<String> upload(MultipartFile file) {
         //日志记录
         log.info("文件上传,文件名-{}", file.getOriginalFilename());
         //调用阿里云的上传方法
-        String url = aliOssUtil.upload(file);
-        log.info("文件访问url:{}",url);
-        return Result.success(url);
+        String url = null;
+        try {
+            //调用阿里云的上传方法
+            url = aliOssUtil.upload(file);
+            log.info("文件访问url:{}", url);
+            return Result.success(url);
+        } catch (Exception e) {
+            log.info("文件上传失败:{}", e);
+
+        }
+        return Result.error(MessageConstant.UPLOAD_FAILED);
     }
 }
