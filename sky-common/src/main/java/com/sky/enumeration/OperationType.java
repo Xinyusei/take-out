@@ -5,6 +5,7 @@ package com.sky.enumeration;
  */
 public enum OperationType {
 
+
     /**
      * 更新操作
      */
