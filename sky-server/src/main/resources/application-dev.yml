@@ -6,3 +6,16 @@ sky:
     database: sky_take_out
     username: root
     password: 123456
+
+  aliyun:
+    oss:
+      endpoint: https://oss-cn-hangzhou.aliyuncs.com
+      bucket-name: web-learn-zjx
+
+  redis:
+    host: 127.0.0.1
+    port: 6666
+    password: 123456
+
+
+
