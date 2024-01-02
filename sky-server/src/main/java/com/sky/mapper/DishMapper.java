@@ -60,9 +60,7 @@ public interface DishMapper {
      * @param id
      * @return
      */
-
     DishVO getWithFlavorById(Long id);
-
     /**
      * 更新菜品
      * @param dish
