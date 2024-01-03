@@ -35,6 +35,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     SetmealMapper setmealMapper;
 
+    /**
+     * 添加购物车
+     * @param shoppingCartDTO
+     */
     @Override
     public void addShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = new ShoppingCart();
