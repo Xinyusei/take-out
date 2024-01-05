@@ -17,7 +17,7 @@ public interface ReportMapper {
      * @param endTime
      * @return
      */
-    Double getByOrderTimeAndSatus(Integer status, LocalDateTime beginTime, LocalDateTime endTime);
+    Double getAmountByOrderTimeAndSatus(Integer status, LocalDateTime beginTime, LocalDateTime endTime);
 
     Double getsumByMap(Map<Object, Object> map);
 
@@ -25,4 +25,7 @@ public interface ReportMapper {
     List<Integer> getByOrderTime(LocalDateTime beginTime, LocalDateTime endTime);
 
     Integer getUserByTime(LocalDateTime beginTime, LocalDateTime endTime);
+
+
+    Integer getNumByOrderTimeAndSatus(Integer status, LocalDateTime beginTime, LocalDateTime endTime);
 }

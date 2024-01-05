@@ -3,10 +3,12 @@ package com.sky.service.impl;
 import com.sky.entity.Orders;
 import com.sky.mapper.ReportMapper;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.models.auth.In;
 import org.apache.commons.lang.StringUtils;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +56,7 @@ public class ReportServiceImpl implements ReportService {
             map.put("beginTime", beginTime);
             map.put("endTime", endTime);
 
-            //Double amount = reportMapper.getByOrderTimeAndSatus(status, beginTime, endTime);
+            //Double amount = reportMapper.getAmountByOrderTimeAndSatus(status, beginTime, endTime);
             Double amount = reportMapper.getsumByMap(map);
             //TODO 注意这里如果当天没有营业额,其值为null 需要转为0
             amount = amount == null ? 0.0 : amount;
@@ -117,6 +119,61 @@ public class ReportServiceImpl implements ReportService {
                 .totalUserList(toatalUserStringlist)
                 .build();
         return userReportVO;
+    }
+
+    /**
+     * 订单统计
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public OrderReportVO getOrderStatistics(LocalDate begin, LocalDate end) {
+
+        //订单时期列表
+        LocalDate start = begin;
+        ArrayList<LocalDate> dateList = new ArrayList<>();
+        ArrayList<Integer> validOrderList = new ArrayList<>();
+        ArrayList<Integer> totalOrderList = new ArrayList<>();
+        Integer completedStatus = Orders.COMPLETED;
+        Integer completedOrders = 0, totalOrders = 0;
+        while (!start.equals(end)) {
+            LocalDateTime beginTime = LocalDateTime.of(start, LocalTime.MIN);
+            LocalDateTime endTime = LocalDateTime.of(start, LocalTime.MAX);
+            //select count(*) from orders where status = ? and order_time < ? and order_time > ?
+            Integer DailycompletedOrders = reportMapper.getNumByOrderTimeAndSatus(completedStatus, beginTime, endTime);
+            Integer DailytotalOrders = reportMapper.getNumByOrderTimeAndSatus(null, beginTime, endTime);
+
+
+            completedOrders += DailycompletedOrders;
+            totalOrders += DailytotalOrders;
+
+            dateList.add(start);
+            validOrderList.add(DailycompletedOrders);
+            totalOrderList.add(DailytotalOrders);
+            start = start.plusDays(1);
+        }
+
+
+        //构建返回订单对象
+        String resDateList = StringUtils.join(dateList, ',');
+        String resValidOrderList = StringUtils.join(validOrderList, ',');
+        String resTotalOrderList = StringUtils.join(totalOrderList, ',');
+        Double orderCompletionRate = 0.0;
+        if (totalOrders != 0) {
+            orderCompletionRate = 1.0 * completedOrders / totalOrders;
+        }
+        OrderReportVO orderReportVO = OrderReportVO.builder()
+                .dateList(resDateList)
+                .orderCompletionRate(orderCompletionRate)
+                .orderCountList(resTotalOrderList)
+                .totalOrderCount(totalOrders)
+                .validOrderCount(completedOrders)
+                .validOrderCountList(resValidOrderList)
+                .build();
+
+        return orderReportVO;
     }
 
 

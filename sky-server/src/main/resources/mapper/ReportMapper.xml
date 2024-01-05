@@ -3,7 +3,7 @@
 <mapper namespace="com.sky.mapper.ReportMapper">
 
     <!--查询已完成订单的每日销售额总和-->
-    <select id="getByOrderTimeAndSatus" resultType="java.lang.Double">
+    <select id="getAmountByOrderTimeAndSatus" resultType="java.lang.Double">
         select sum(amount) from orders
         <where>
             <if test="status != null">and status=#{status}</if>
@@ -44,6 +44,21 @@
             </if>
             <if test="endTime != null">
                 and create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="getNumByOrderTimeAndSatus" resultType="java.lang.Integer">
+        select count(*) from orders
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="beginTime != null">
+                and order_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and order_time &lt;= #{endTime}
             </if>
         </where>
     </select>
