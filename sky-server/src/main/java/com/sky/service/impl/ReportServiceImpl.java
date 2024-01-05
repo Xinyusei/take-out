@@ -1,9 +1,12 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
+import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.mapper.ReportMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.models.auth.In;
@@ -174,6 +177,37 @@ public class ReportServiceImpl implements ReportService {
                 .build();
 
         return orderReportVO;
+    }
+
+    /**
+     * 查询销量排名top10
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public SalesTop10ReportVO getsalesTop10Report(LocalDate begin, LocalDate end) {
+
+        //TODO 这个SQL很巧妙
+        List<GoodsSalesDTO> goodsSalesDTOList = reportMapper.getTop10Report(begin, end);
+
+
+        ArrayList<Integer> numberlist = new ArrayList<>();
+        ArrayList<String> namelist = new ArrayList<>();
+        for (GoodsSalesDTO goodsSalesDTO : goodsSalesDTOList) {
+            namelist.add(goodsSalesDTO.getName());
+            numberlist.add(goodsSalesDTO.getNumber());
+
+        }
+        String resNamelist = StringUtils.join(namelist, ',');
+        String resNumberlist = StringUtils.join(numberlist, ',');
+        SalesTop10ReportVO salesTop10ReportVO = SalesTop10ReportVO.builder()
+                .nameList(resNamelist)
+                .numberList(resNumberlist)
+                .build();
+
+        return salesTop10ReportVO;
     }
 
 
